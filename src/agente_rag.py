@@ -18,7 +18,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
-from indexar_documentos import PERSIST_DIR, COLLECTION_NAME
+from indexar_documentos import PERSIST_DIR, COLLECTION_NAME, build_vectorstore
 from registro_ejecucion import registrar_interaccion
 
 load_dotenv()
@@ -54,25 +54,19 @@ def _formatear_contexto(documentos):
 
 
 def get_rag_chain():
+    # Si el indice vectorial no existe todavia (ej. primer arranque en la nube,
+    # donde chroma_db/ no se sube a GitHub), lo construimos automaticamente.
+    indice_existe = os.path.isdir(PERSIST_DIR) and len(os.listdir(PERSIST_DIR)) > 0
+    if not indice_existe:
+        print("Indice vectorial no encontrado. Construyendolo por primera vez...")
+        build_vectorstore()
+
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
     vectorstore = Chroma(
         collection_name=COLLECTION_NAME,
         embedding_function=embeddings,
         persist_directory=PERSIST_DIR,
     )
-    # top-k=5 (ver etapa 4: reranking simplificado -> nos quedamos con los 5 mas cercanos)
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
-
-    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.2)
-    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT)
-
-    chain = (
-        {"context": retriever | _formatear_contexto, "question": RunnablePassthrough()}
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
-    return chain, retriever
 
 
 def responder(pregunta: str):
