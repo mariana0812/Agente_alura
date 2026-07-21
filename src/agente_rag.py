@@ -67,6 +67,19 @@ def get_rag_chain():
         embedding_function=embeddings,
         persist_directory=PERSIST_DIR,
     )
+    # top-k=5 (ver etapa 4: reranking simplificado -> nos quedamos con los 5 mas cercanos)
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.2)
+    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT)
+
+    chain = (
+        {"context": retriever | _formatear_contexto, "question": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain, retriever
 
 
 def responder(pregunta: str):
