@@ -1,3 +1,5 @@
+"""
+Interfaz de chat para el Agente NextSkill.
 
 Uso:
     streamlit run interfaz_chat.py
