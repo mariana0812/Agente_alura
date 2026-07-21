@@ -9,6 +9,16 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 import streamlit as st
+# Cargar claves de API desde Streamlit secrets
+if "GOOGLE_API_KEY" in st.secrets:
+    os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
+if "GROQ_API_KEY" in st.secrets:
+    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+
+from agente_rag import responder
+from registro_ejecucion import actualizar_feedback
+
+
 from datetime import datetime, timezone
 from agente_rag import responder
 from registro_ejecucion import actualizar_feedback
