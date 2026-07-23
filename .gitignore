@@ -5,3 +5,4 @@ __pycache__/
 logs/
 chroma_db/
 .DS_Store
+GUIA_PASO_A_PASO.md
