@@ -110,7 +110,7 @@ streamlit run interfaz_chat.py
 
 **Capturas:**
 
-![Agente respondiendo en Streamlit](docs/screenshots/Screenshot from 2026-07-23 13-15-33.png)
+![Agente respondiendo en Streamlit](docs/screenshots/deploy.png)
 
 ---
 
