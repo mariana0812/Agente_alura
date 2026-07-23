@@ -47,7 +47,7 @@ def build_vectorstore():
     print(f"  -> {len(chunks)} chunks generados")
 
     print("Generando embeddings e indexando en Chroma ...")
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
     vectorstore = Chroma.from_documents(
         documents=chunks,
